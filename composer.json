@@ -1,0 +1,62 @@
+{
+    "name": "buildotter/php-maker-standalone-src",
+    "description": "Generate test data builder based on Buildotter Core",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Benjamin Rambaud",
+            "email": "beram.job@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "symfony/console": "^6.4",
+        "nette/php-generator": "^4.1",
+        "symfony/filesystem": "^6.4",
+        "roave/better-reflection": "^6.25"
+    },
+    "require-dev": {
+        "buildotter/php-core": "dev-main",
+        "phpstan/phpstan": "^1.11",
+        "phpstan/phpstan-phpunit": "^1.4",
+        "phpstan/phpstan-symfony": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Buildotter\\MakerStandalone\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Buildotter\\Tests\\MakerStandalone\\": "tests"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "tools:run": [
+            "@tools:run:php-cs-fixer",
+            "@tools:run:phpunit",
+            "@tools:run:phpstan",
+            "@tools:run:infection"
+        ],
+        "tools:run:phpunit": "tools/phpunit.phar",
+        "tools:run:php-cs-fixer": "tools/php-cs-fixer fix",
+        "tools:run:phpstan": "vendor/bin/phpstan",
+        "tools:run:infection": "tools/infection -s"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/buildotter/php-core"
+        }
+    ]
+}
