@@ -10,6 +10,5 @@ final class Foo
         public string $name,
         public int $number,
         public Bar $bar,
-    ) {
-    }
+    ) {}
 }

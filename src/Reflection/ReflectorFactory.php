@@ -11,8 +11,7 @@ use Roave\BetterReflection\Reflector\DefaultReflector;
 use Roave\BetterReflection\Reflector\Reflector;
 use Roave\BetterReflection\SourceLocator\Type\ComposerSourceLocator;
 
-final class
-ReflectorFactory
+final class ReflectorFactory
 {
     public static function createFromAutoloader(string $autoloaderPath): Reflector
     {

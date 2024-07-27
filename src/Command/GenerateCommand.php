@@ -30,8 +30,8 @@ final class GenerateCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('class', InputArgument::OPTIONAL, 'The class for which to generate a builder');
-        $this->addArgument('generated-namespace', InputArgument::OPTIONAL, 'The namespace of the generated builder.');
+        $this->addArgument('class', InputArgument::OPTIONAL, 'The class (FQCN) for which to generate a builder');
+        $this->addArgument('generated-class', InputArgument::OPTIONAL, 'The FQCN of the generated builder.');
 
         $this->addOption('autoloader', null, InputOption::VALUE_REQUIRED, 'The path to the Composer autoload file', './vendor/autoload.php');
         $this->addOption('generated-folder', null, InputOption::VALUE_REQUIRED, 'The path where to generate the builder.');
@@ -40,32 +40,42 @@ final class GenerateCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
+        $ioError = $io->getErrorStyle();
 
-        $io->info(\sprintf('Using the following autoload file: "%s". If this is not the one you wanted, it may be modified using the ', $input->getOption('autoloader')));
+        $io->info(\sprintf('Using the following autoload file: "%s". If this is not the one you wanted, it may be modified using the option "--autoloader"', $input->getOption('autoloader')));
 
-        // @TODO: try to infer generated folder from the namespace
-        if (false === \is_string($input->getOption('generated-folder'))) {
-            $question = new Question('Where do you want to store the generated builder?');
-            $value = $io->askQuestion($question);
-
-            $input->setOption('generated-folder', $value);
+        try {
+            $reflector = ReflectorFactory::createFromAutoloader($input->getOption('autoloader'));
+        }
+        catch (InvalidClassLoaderException $e) {
+            $ioError->error($e->getMessage());
+            return;
         }
 
         if (false === \is_string($input->getArgument('class'))) {
             $question = new Question('For which class do you need to generate a builder?');
-            // @TODO: autocomplete
-            $value = $io->askQuestion($question);
 
-            $input->setArgument('class', $value);
+            // @TODO: autocomplete
+            $input->setArgument('class', $io->askQuestion($question));
         }
 
-        // @TODO: propose a default FQCN
-        // @TODO: rename argument to make it clear it is the FQCN
-        if (false === \is_string($input->getArgument('generated-namespace'))) {
-            $question = new Question('What is the namespace of the generated builder?', 'App\\Fixture\\Builder\\FooBuilder');
-            $value = $io->askQuestion($question);
+        if (false === \is_string($input->getArgument('generated-class'))) {
+            $reflectionClass = $reflector->reflectClass($input->getArgument('class'));
+            $builderShortClassName = \sprintf('%sBuilder', $reflectionClass->getShortName());
 
-            $input->setArgument('generated-namespace', $value);
+            $question = new Question('What is the namespace of the generated builder?', \sprintf('App\\Fixture\\Builder\\%s', $builderShortClassName));
+
+            $input->setArgument('generated-class', $io->askQuestion($question));
+        }
+
+        if (false === \is_string($input->getOption('generated-folder'))) {
+            // Poor man's solution to infer the generated folder from the FQCN and propose it as default value.
+            $generatedNamespace = $this->getGeneratedNamespace($input->getArgument('generated-class'));
+            $generatedFolder = \preg_replace('/^[^\/]+/', 'src', \str_replace('\\', '/', $generatedNamespace));
+
+            $question = new Question('Where do you want to store the generated builder?', $generatedFolder);
+
+            $input->setOption('generated-folder', $io->askQuestion($question));
         }
     }
 
@@ -92,16 +102,16 @@ final class GenerateCommand extends Command
             return Command::INVALID;
         }
 
-        $generatedNamespace = $this->getGeneratedNamespace($input);
-        if (false === \is_string($generatedNamespace)) {
-            $ioError->error('Missing or invalid generated-namespace.');
+        $generatedFqcn = $this->getGeneratedFqcn($input);
+        if (false === \is_string($generatedFqcn)) {
+            $ioError->error('Missing or invalid generated-class.');
             return Command::INVALID;
         }
 
-        $builderShortClassName = \sprintf('%sBuilder', $reflectionClass->getShortName());
+        $builderShortClassName = $this->getBuilderShortClassName($generatedFqcn);
 
         $file = $this->generateBuilder(
-            $generatedNamespace,
+            $this->getGeneratedNamespace($generatedFqcn),
             $builderShortClassName,
             $reflectionClass,
         );
@@ -136,18 +146,18 @@ final class GenerateCommand extends Command
     /**
      * @return non-empty-string|null
      */
-    private function getGeneratedNamespace(InputInterface $input): string|null
+    private function getGeneratedFqcn(InputInterface $input): string|null
     {
-        $generatedNamespace = $input->getArgument('generated-namespace');
+        $generatedFqcn = $input->getArgument('generated-class');
 
-        if (false === \is_string($generatedNamespace)) {
+        if (false === \is_string($generatedFqcn)) {
             return null;
         }
-        if ('' === $generatedNamespace) {
+        if ('' === $generatedFqcn) {
             return null;
         }
 
-        return $generatedNamespace;
+        return $generatedFqcn;
     }
 
     private function generateBuilder(
@@ -198,5 +208,19 @@ CODE
             ->setBody($body);
 
         return $file;
+    }
+
+    private function getGeneratedNamespace(?string $generatedFqcn): string
+    {
+        $generatedNamespace = \substr($generatedFqcn, 0, \strrpos($generatedFqcn, '\\'));
+
+        return $generatedNamespace;
+    }
+
+    private function getBuilderShortClassName(?string $generatedFqcn): string
+    {
+        $builderShortClassName = \substr($generatedFqcn, \strrpos($generatedFqcn, '\\') + 1);
+
+        return $builderShortClassName;
     }
 }

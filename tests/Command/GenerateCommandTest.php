@@ -12,6 +12,8 @@ use Symfony\Component\Filesystem\Path;
 
 final class GenerateCommandTest extends TestCase
 {
+    private string $basePath;
+
     protected function setUp(): void
     {
         $this->basePath = $_ENV['BUILDATA_TEST_BASE_PATH'] ?? \sys_get_temp_dir();
@@ -26,7 +28,7 @@ final class GenerateCommandTest extends TestCase
         $commandTester->execute(
             [
                 'class' => Bar::class,
-                'generated-namespace' => 'Buildotter\Tests\MakerStandalone\Command\fixtures\expected',
+                'generated-class' => 'Buildotter\Tests\MakerStandalone\Command\fixtures\expected\BarBuilder',
                 '--autoloader' => __DIR__ . '/../../vendor/autoload.php',
                 '--generated-folder' => $builderFolder,
             ],
