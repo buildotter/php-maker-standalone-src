@@ -23,6 +23,7 @@ final class GenerateCommandTest extends TestCase
     public function test_it_should_generate_builder(): void
     {
         $builderFolder = Path::canonicalize(\sprintf('%s/%s', $this->basePath, \uniqid()));
+        $functionsFile = $builderFolder . '/data-builders.php';
 
         $command = new GenerateCommand(new BuilderGenerator());
         $commandTester = new CommandTester($command);
@@ -32,6 +33,7 @@ final class GenerateCommandTest extends TestCase
                 'generated-class' => 'Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder',
                 '--autoloader' => __DIR__ . '/../../vendor/autoload.php',
                 '--generated-folder' => $builderFolder,
+                '--generated-functions' => $functionsFile,
             ],
             [
                 'capture_stderr_separately' => true,
@@ -44,5 +46,7 @@ final class GenerateCommandTest extends TestCase
         $file = \sprintf('%s/BarBuilder.php', $builderFolder);
         self::assertFileExists($file);
         self::assertFileEquals(\sprintf('%s/../fixtures/expected/BarBuilder.php.txt', __DIR__), $file);
+        self::assertFileExists($functionsFile);
+        self::assertFileEquals(\sprintf('%s/fixtures/expected/data-builders.php.txt', __DIR__), $functionsFile);
     }
 }

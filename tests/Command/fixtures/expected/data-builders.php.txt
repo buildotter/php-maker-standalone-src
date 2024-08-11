@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+use Buildotter\Core\RandomMultiple;
+use Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder;
+
+function aBar(): BarBuilder
+{
+    return BarBuilder::random();
+}
+
+/**
+ * @return Buildotter\Tests\MakerStandalone\fixtures\Bar[]
+ */
+function someBar(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::from(BarBuilder::class, $numberOfItems);
+}
+
+/**
+ * @return BarBuilder[]
+ */
+function someBarToBuild(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::toBuildFrom(BarBuilder::class, $numberOfItems);
+}

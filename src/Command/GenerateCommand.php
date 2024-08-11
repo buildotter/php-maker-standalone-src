@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Buildotter\MakerStandalone\Command;
 
+use Buildotter\Core\RandomMultiple;
 use Buildotter\MakerStandalone\Exception\InvalidArgumentException;
 use Buildotter\MakerStandalone\Exception\InvalidClassLoaderException;
 use Buildotter\MakerStandalone\Generator\BuilderGenerator;
 use Buildotter\MakerStandalone\Reflection\ReflectorFactory;
+use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
@@ -38,6 +40,7 @@ final class GenerateCommand extends Command
 
         $this->addOption('autoloader', null, InputOption::VALUE_REQUIRED, 'The path to the Composer autoload file', './vendor/autoload.php');
         $this->addOption('generated-folder', null, InputOption::VALUE_REQUIRED, 'The path where to generate the builder.');
+        $this->addOption('generated-functions', null, InputOption::VALUE_REQUIRED, 'The path where to generate the functions.', './src/Fixtures/data-builders.php');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -153,13 +156,41 @@ final class GenerateCommand extends Command
         if (false === \file_put_contents(\sprintf('%s/%s.php', $generatedFolder, $builderShortClassName), $printer->printFile($file))) {
             return Command::FAILURE;
         }
-
-        // @TODO: generate the functions (afoo(), someFoo() etc..)
-
         $io->success(\sprintf(
             'Builder "%s" for class "%s" generated in "%s".',
             $generatedFqcn, $reflectionClass->getName(), $generatedFolder,
         ));
+
+        // @TODO: generate the functions (afoo(), someFoo() etc..)
+        // @TODO: add possibility to happen to file: if function 'random' does not exist, add it.
+        $functionsFile = new PhpFile();
+        $functionsFile->setStrictTypes();
+        $functionsFile->addUse($generatedFqcn);
+        $functionsFile->addUse(RandomMultiple::class);
+        $functionsFile->addFunction(\sprintf('a%s', $reflectionClass->getShortName()))
+            ->setReturnType($builderShortClassName)
+            ->setBody(\sprintf('return %s::random();', $builderShortClassName));
+        $someFromFunction = $functionsFile->addFunction(\sprintf('some%s', $reflectionClass->getShortName()));
+        $someFromFunction->addComment(\sprintf('@return %s[]', $reflectionClass->getName()));
+        $someFromFunction->addParameter('numberOfItems')
+            ->setType('int|null')
+            ->setDefaultValue(null);
+        $someFromFunction->setReturnType('array')
+            ->setBody(\sprintf('return RandomMultiple::from(%s::class, $numberOfItems);', $builderShortClassName));
+        $someToBuildFromFunction = $functionsFile->addFunction(\sprintf('some%sToBuild', $reflectionClass->getShortName()));
+        $someToBuildFromFunction->addComment(\sprintf('@return %s[]', $builderShortClassName));
+        $someToBuildFromFunction->addParameter('numberOfItems')
+            ->setType('int|null')
+            ->setDefaultValue(null);
+        $someToBuildFromFunction->setReturnType('array')
+            ->setBody(\sprintf('return RandomMultiple::toBuildFrom(%s::class, $numberOfItems);', $builderShortClassName));
+
+        $directory = Path::getDirectory($input->getOption('generated-functions'));
+        $filesystem->mkdir($directory);
+        if (false === \file_put_contents($input->getOption('generated-functions'), $printer->printFile($functionsFile))) {
+            return Command::FAILURE;
+        }
+        $io->success(\sprintf('Builder functions generated in "%s".', $input->getOption('generated-functions')));
 
         return Command::SUCCESS;
     }
