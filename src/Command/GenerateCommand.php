@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Buildotter\MakerStandalone\Command;
 
-use Buildotter\Core\BuildableWithArgUnpacking;
-use Buildotter\Core\Buildatable;
 use Buildotter\MakerStandalone\Exception\InvalidArgumentException;
 use Buildotter\MakerStandalone\Exception\InvalidClassLoaderException;
+use Buildotter\MakerStandalone\Generator\BuilderGenerator;
 use Buildotter\MakerStandalone\Reflection\ReflectorFactory;
-use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
@@ -27,8 +25,9 @@ use Symfony\Component\Filesystem\Path;
 
 final class GenerateCommand extends Command
 {
-    public function __construct()
-    {
+    public function __construct(
+        private BuilderGenerator $builderGenerator,
+    ) {
         parent::__construct('generate');
     }
 
@@ -141,7 +140,8 @@ final class GenerateCommand extends Command
 
         $builderShortClassName = $this->getBuilderShortClassName($generatedFqcn);
 
-        $file = $this->generateBuilder(
+        // @TODO: add option to choose the BuildableWithArray trait too.
+        $file = $this->builderGenerator->generateBuilder(
             $this->getGeneratedNamespace($generatedFqcn),
             $builderShortClassName,
             $reflectionClass,
@@ -201,56 +201,6 @@ final class GenerateCommand extends Command
         }
 
         return $generatedFqcn;
-    }
-
-    private function generateBuilder(
-        string $generatedNamespace,
-        string $shortClassName,
-        ReflectionClass $reflectionClass,
-    ): PhpFile {
-        $file = new PhpFile();
-        $file->setStrictTypes();
-        $namespace = $file->addNamespace($generatedNamespace);
-
-        $namespace->addUse(BuildableWithArgUnpacking::class);
-        $namespace->addUse(Buildatable::class);
-        $namespace->addUse($reflectionClass->getName());
-
-        $class = $namespace->addClass($shortClassName);
-        $class->addImplement(Buildatable::class)
-            ->setFinal()
-            ->addComment(\sprintf('@implements Buildatable<%s>', $reflectionClass->getShortName()))
-            ->addTrait(BuildableWithArgUnpacking::class);
-
-        $constructor = $class->addMethod('__construct');
-
-        foreach ($reflectionClass->getProperties() as $property) {
-            $constructor->addPromotedParameter($property->getName())
-                ->setType((string) $property->getType());
-        }
-
-        $class->addMethod('random')
-            ->setStatic()
-            ->setReturnType('static')
-            ->setBody(
-                <<<'CODE'
-$random = \random();
-
-return new static(/** @TODO: Initialize its properties to commonly used or safe values */);
-CODE
-            );
-
-        $body = \sprintf('return new %s(%s', $reflectionClass->getShortName(), \PHP_EOL);
-        foreach ($reflectionClass->getProperties() as $property) {
-            $body .= \sprintf('    $this->%s,%s', $property->getName(), \PHP_EOL);
-        }
-        $body .= ');';
-
-        $class->addMethod('build')
-            ->setReturnType($reflectionClass->getName())
-            ->setBody($body);
-
-        return $file;
     }
 
     private function getGeneratedNamespace(string|null $generatedFqcn): string

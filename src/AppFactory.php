@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Buildotter\MakerStandalone;
 
+use Buildotter\MakerStandalone\Generator\BuilderGenerator;
 use Symfony\Component\Console\Application;
 
 final class AppFactory
@@ -12,7 +13,7 @@ final class AppFactory
     {
         $app = new Application();
 
-        $command = new Command\GenerateCommand();
+        $command = new Command\GenerateCommand(new BuilderGenerator());
         $app->add($command);
         $app->setDefaultCommand($command->getName() ?? 'generate', true);
 

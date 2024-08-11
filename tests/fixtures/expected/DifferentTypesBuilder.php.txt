@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Buildotter\Tests\MakerStandalone\fixtures\expected;
+
+use Buildotter\Core\BuildableWithArgUnpacking;
+use Buildotter\Core\Buildatable;
+use Buildotter\Tests\MakerStandalone\fixtures\DifferentTypes;
+
+/**
+ * @implements Buildatable<DifferentTypes>
+ */
+final class DifferentTypesBuilder implements Buildatable
+{
+    use BuildableWithArgUnpacking;
+
+    public function __construct(
+        public string $classic,
+        public string|int|\Buildotter\Tests\MakerStandalone\fixtures\Bar $union,
+        public \Iterator&\Countable $intersection,
+    ) {
+    }
+
+    public static function random(): static
+    {
+        $random = \random();
+
+        return new static(/** @TODO: Initialize its properties to commonly used or safe values */);
+    }
+
+    public function build(): DifferentTypes
+    {
+        return new DifferentTypes(
+            $this->classic,
+            $this->union,
+            $this->intersection,
+        );
+    }
+}

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Buildotter\Tests\MakerStandalone\Command\fixtures\expected;
+namespace Buildotter\Tests\MakerStandalone\fixtures\expected;
 
 use Buildotter\Core\BuildableWithArgUnpacking;
 use Buildotter\Core\Buildatable;
-use Buildotter\Tests\MakerStandalone\Command\fixtures\Bar;
+use Buildotter\Tests\MakerStandalone\fixtures\Bar;
 
 /**
  * @implements Buildatable<Bar>

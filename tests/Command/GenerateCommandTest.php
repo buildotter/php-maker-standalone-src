@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Buildotter\Tests\MakerStandalone\Command;
 
 use Buildotter\MakerStandalone\Command\GenerateCommand;
-use Buildotter\Tests\MakerStandalone\Command\fixtures\Bar;
+use Buildotter\MakerStandalone\Generator\BuilderGenerator;
+use Buildotter\Tests\MakerStandalone\fixtures\Bar;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Path;
@@ -23,12 +24,12 @@ final class GenerateCommandTest extends TestCase
     {
         $builderFolder = Path::canonicalize(\sprintf('%s/%s', $this->basePath, \uniqid()));
 
-        $command = new GenerateCommand();
+        $command = new GenerateCommand(new BuilderGenerator());
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [
                 'class' => Bar::class,
-                'generated-class' => 'Buildotter\Tests\MakerStandalone\Command\fixtures\expected\BarBuilder',
+                'generated-class' => 'Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder',
                 '--autoloader' => __DIR__ . '/../../vendor/autoload.php',
                 '--generated-folder' => $builderFolder,
             ],
@@ -42,6 +43,6 @@ final class GenerateCommandTest extends TestCase
 
         $file = \sprintf('%s/BarBuilder.php', $builderFolder);
         self::assertFileExists($file);
-        self::assertFileEquals(\sprintf('%s/fixtures/expected/BarBuilder.php.txt', __DIR__), $file);
+        self::assertFileEquals(\sprintf('%s/../fixtures/expected/BarBuilder.php.txt', __DIR__), $file);
     }
 }

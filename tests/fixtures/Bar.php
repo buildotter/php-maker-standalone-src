@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Buildotter\Tests\MakerStandalone\Command\fixtures;
+namespace Buildotter\Tests\MakerStandalone\fixtures;
 
 final class Bar
 {
