@@ -6,12 +6,16 @@ namespace Buildotter\MakerStandalone\Command;
 
 use Buildotter\Core\BuildableWithArgUnpacking;
 use Buildotter\Core\Buildatable;
+use Buildotter\MakerStandalone\Exception\InvalidArgumentException;
 use Buildotter\MakerStandalone\Exception\InvalidClassLoaderException;
 use Buildotter\MakerStandalone\Reflection\ReflectorFactory;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
+use Roave\BetterReflection\Reflector\Exception\IdentifierNotFound;
+use Roave\BetterReflection\Reflector\Reflector;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,29 +52,43 @@ final class GenerateCommand extends Command
             $reflector = ReflectorFactory::createFromAutoloader($input->getOption('autoloader'));
         }
         catch (InvalidClassLoaderException $e) {
-            $ioError->error($e->getMessage());
-            return;
+            throw new RuntimeException($e->getMessage());
         }
 
         if (false === \is_string($input->getArgument('class'))) {
-            $question = new Question('For which class do you need to generate a builder?');
+            $question = new Question('For which class do you need to generate a builder? Please enter the Fully Qualified Class Name (FQCN)');
+            $question->setValidator(static function (string|null $class) use ($reflector): string {
+                if (false === \is_string($class) || '' === $class) {
+                    throw new InvalidArgumentException('Invalid class name.');
+                }
+
+                try {
+                    $reflector->reflectClass($class);
+                }
+                catch (IdentifierNotFound $_) {
+                    throw new InvalidArgumentException(\sprintf('Class "%s" not found.', $class));
+                }
+
+                return $class;
+            });
 
             // @TODO: autocomplete
             $input->setArgument('class', $io->askQuestion($question));
         }
 
         if (false === \is_string($input->getArgument('generated-class'))) {
-            $reflectionClass = $reflector->reflectClass($input->getArgument('class'));
+            $reflectionClass = $this->getReflectionClass($reflector, $input);
             $builderShortClassName = \sprintf('%sBuilder', $reflectionClass->getShortName());
 
-            $question = new Question('What is the namespace of the generated builder?', \sprintf('App\\Fixture\\Builder\\%s', $builderShortClassName));
+            $question = new Question('What is the FQCN of the generated builder?', \sprintf('App\\Fixture\\Builder\\%s', $builderShortClassName));
+            $question->setValidator(static fn (string|null $generatedClass): string => (true === \is_string($generatedClass) && '' !== $generatedClass) ? $generatedClass : throw new InvalidArgumentException('Invalid generated class name.'));
 
             $input->setArgument('generated-class', $io->askQuestion($question));
         }
 
         if (false === \is_string($input->getOption('generated-folder'))) {
             // Poor man's solution to infer the generated folder from the FQCN and propose it as default value.
-            $generatedNamespace = $this->getGeneratedNamespace($input->getArgument('generated-class'));
+            $generatedNamespace = $this->getGeneratedNamespace($this->getGeneratedFqcn($input));
             $generatedFolder = \preg_replace('/^[^\/]+/', 'src', \str_replace('\\', '/', $generatedNamespace));
 
             $question = new Question('Where do you want to store the generated builder?', $generatedFolder);
@@ -92,20 +110,33 @@ final class GenerateCommand extends Command
             return Command::FAILURE;
         }
 
-        $reflectionClass = $reflector->reflectClass($input->getArgument('class'));
-
-        $io->text('Generating builder for class ' . $reflectionClass->getName());
+        try {
+            $reflectionClass = $this->getReflectionClass($reflector, $input);
+        }
+        catch (IdentifierNotFound|InvalidArgumentException $_) {
+            $ioError->error(\sprintf('Class "%s" not found.', $input->getArgument('class')));
+            return Command::INVALID;
+        }
+        if (true === $output->isDebug()) {
+            $ioError->writeln(\sprintf('[debug] Generating builder for class "%s".', $reflectionClass->getName()));
+        }
 
         $generatedFolder = $this->getGeneratedFolder($input);
         if (false === \is_string($generatedFolder)) {
             $ioError->error('Missing or invalid generated-folder.');
             return Command::INVALID;
         }
+        if (true === $output->isDebug()) {
+            $ioError->writeln(\sprintf('[debug] It will be generated in folder "%s".', $generatedFolder));
+        }
 
         $generatedFqcn = $this->getGeneratedFqcn($input);
         if (false === \is_string($generatedFqcn)) {
             $ioError->error('Missing or invalid generated-class.');
             return Command::INVALID;
+        }
+        if (true === $output->isDebug()) {
+            $ioError->writeln(\sprintf('[debug] Generated builder is "%s".', $generatedFqcn));
         }
 
         $builderShortClassName = $this->getBuilderShortClassName($generatedFqcn);
@@ -122,6 +153,13 @@ final class GenerateCommand extends Command
         if (false === \file_put_contents(\sprintf('%s/%s.php', $generatedFolder, $builderShortClassName), $printer->printFile($file))) {
             return Command::FAILURE;
         }
+
+        // @TODO: generate the functions (afoo(), someFoo() etc..)
+
+        $io->success(\sprintf(
+            'Builder "%s" for class "%s" generated in "%s".',
+            $generatedFqcn, $reflectionClass->getName(), $generatedFolder,
+        ));
 
         return Command::SUCCESS;
     }
@@ -140,7 +178,12 @@ final class GenerateCommand extends Command
             return null;
         }
 
-        return Path::canonicalize($generatedFolder);
+        $canonicalized = Path::canonicalize($generatedFolder);
+        if ('' === $canonicalized) {
+            return null;
+        }
+
+        return $canonicalized;
     }
 
     /**
@@ -183,7 +226,7 @@ final class GenerateCommand extends Command
 
         foreach ($reflectionClass->getProperties() as $property) {
             $constructor->addPromotedParameter($property->getName())
-                ->setType($property->getType()?->getName());
+                ->setType((string) $property->getType());
         }
 
         $class->addMethod('random')
@@ -210,17 +253,45 @@ CODE
         return $file;
     }
 
-    private function getGeneratedNamespace(?string $generatedFqcn): string
+    private function getGeneratedNamespace(string|null $generatedFqcn): string
     {
-        $generatedNamespace = \substr($generatedFqcn, 0, \strrpos($generatedFqcn, '\\'));
+        if (false === \is_string($generatedFqcn) || '' === $generatedFqcn) {
+            throw new InvalidArgumentException('Invalid generated FQCN.');
+        }
+
+        $position = \strrpos($generatedFqcn, '\\');
+        if (false === $position) {
+            throw new InvalidArgumentException('Unable to find namespace from generated FQCN.');
+        }
+        $generatedNamespace = \substr($generatedFqcn, 0, $position);
 
         return $generatedNamespace;
     }
 
     private function getBuilderShortClassName(?string $generatedFqcn): string
     {
-        $builderShortClassName = \substr($generatedFqcn, \strrpos($generatedFqcn, '\\') + 1);
+        if (false === \is_string($generatedFqcn) || '' === $generatedFqcn) {
+            throw new InvalidArgumentException('Invalid generated FQCN.');
+        }
+
+        $position = \strrpos($generatedFqcn, '\\');
+        if (false === $position) {
+            throw new InvalidArgumentException('Unable to find namespace from generated FQCN.');
+        }
+        $builderShortClassName = \substr($generatedFqcn, $position + 1);
 
         return $builderShortClassName;
+    }
+
+    private function getReflectionClass(Reflector $reflector, InputInterface $input): ReflectionClass
+    {
+        $class = $input->getArgument('class');
+        if (false === \is_string($class) || '' === $class) {
+            throw new InvalidArgumentException('Invalid class name.');
+        }
+
+        $reflectionClass = $reflector->reflectClass($class);
+
+        return $reflectionClass;
     }
 }

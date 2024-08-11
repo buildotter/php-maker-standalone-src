@@ -15,6 +15,10 @@ final class ReflectorFactory
 {
     public static function createFromAutoloader(string $autoloaderPath): Reflector
     {
+        if (false === \file_exists($autoloaderPath)) {
+            throw new InvalidClassLoaderException(\sprintf('The autoloader file "%s" does not exist', $autoloaderPath));
+        }
+
         $classLoader = require $autoloaderPath;
 
         if (false === ($classLoader instanceof ClassLoader)) {
