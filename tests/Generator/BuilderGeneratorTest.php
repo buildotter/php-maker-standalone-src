@@ -23,8 +23,7 @@ class BuilderGeneratorTest extends TestCase
         string $expected,
         array $args,
     ): void {
-        $generator = new BuilderGenerator();
-        $file = $generator->generateBuilder(...$args);
+        $file = $this->builderGenerator()->generateBuilder(...$args);
 
         self::assertEquals(
             \file_get_contents($expected),
@@ -56,8 +55,26 @@ class BuilderGeneratorTest extends TestCase
         ];
     }
 
+    public function test_it_should_generate_the_random_function_based_on_faker(): void
+    {
+        $file = new PhpFile();
+        $generated = $this->builderGenerator()->generateRandomFunctionBasedOnFaker($file);
+
+        self::assertEquals(
+            \file_get_contents(__DIR__ . '/fixtures/expected/random-function.php.txt'),
+            $this->phpFiletoStringPsrCompliant($generated),
+        );
+    }
+
     private function phpFiletoStringPsrCompliant(PhpFile $file): string
     {
         return (new PsrPrinter())->printFile($file);
+    }
+
+    private function builderGenerator(): BuilderGenerator
+    {
+        $generator = new BuilderGenerator();
+
+        return $generator;
     }
 }

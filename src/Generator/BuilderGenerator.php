@@ -6,6 +6,7 @@ namespace Buildotter\MakerStandalone\Generator;
 
 use Buildotter\Core\BuildableWithArgUnpacking;
 use Buildotter\Core\Buildatable;
+use Buildotter\Core\RandomMultiple;
 use Nette\PhpGenerator\PhpFile;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
@@ -59,5 +60,63 @@ CODE
             ->setBody($body);
 
         return $file;
+    }
+
+    public function generateFunctionsForBuilder(
+        PhpFile $functionsFile,
+        string $generatedFqcn,
+        ReflectionClass $reflectionClass,
+        string $builderShortClassName,
+    ): PhpFile {
+        $functionsFile = clone $functionsFile;
+
+        $functionsFile->setStrictTypes();
+        $functionsFile->addUse($generatedFqcn);
+        $functionsFile->addUse(RandomMultiple::class);
+
+        $functionsFile
+            ->addFunction(\sprintf('a%s', $reflectionClass->getShortName()))
+            ->setReturnType($builderShortClassName)
+            ->setBody(\sprintf('return %s::random();', $builderShortClassName));
+
+        $someFromFunction = $functionsFile->addFunction(\sprintf('some%s', $reflectionClass->getShortName()));
+        $someFromFunction->addComment(\sprintf('@return %s[]', $reflectionClass->getName()));
+        $someFromFunction->addParameter('numberOfItems')
+            ->setType('int|null')
+            ->setDefaultValue(null);
+        $someFromFunction
+            ->setReturnType('array')
+            ->setBody(\sprintf('return RandomMultiple::from(%s::class, $numberOfItems);', $builderShortClassName));
+
+        $someToBuildFromFunction = $functionsFile->addFunction(\sprintf('some%sToBuild', $reflectionClass->getShortName()));
+        $someToBuildFromFunction->addComment(\sprintf('@return %s[]', $builderShortClassName));
+        $someToBuildFromFunction->addParameter('numberOfItems')
+            ->setType('int|null')
+            ->setDefaultValue(null);
+        $someToBuildFromFunction
+            ->setReturnType('array')
+            ->setBody(\sprintf('return RandomMultiple::toBuildFrom(%s::class, $numberOfItems);', $builderShortClassName));
+
+        return $functionsFile;
+    }
+
+    public function generateRandomFunctionBasedOnFaker(PhpFile $file): PhpFile
+    {
+        if (true === $this->hasFunction($file, 'random')) {
+            return $file;
+        }
+
+        $file = clone $file;
+        $file
+            ->addFunction('random')
+            ->setReturnType('\Faker\Generator')
+            ->setBody(\sprintf('return \Faker\Factory::create();'));
+
+        return $file;
+    }
+
+    private function hasFunction(PhpFile $file, string $name): bool
+    {
+        return \array_key_exists($name, $file->getFunctions());
     }
 }

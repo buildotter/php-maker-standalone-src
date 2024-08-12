@@ -1,0 +1,6 @@
+<?php
+
+function random(): Faker\Generator
+{
+    return \Faker\Factory::create();
+}

@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+use Buildotter\Core\RandomMultiple;
+use Buildotter\Tests\MakerStandalone\fixtures\expected\FooBuilder;
+
+function random(): \Faker\Generator
+{
+    return \Faker\Factory::create();
+}
+
+function aFoo(): FooBuilder
+{
+    return FooBuilder::random();
+}
+
+/**
+ * @return Buildotter\Tests\MakerStandalone\fixtures\Foo[]
+ */
+function someFoo(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::from(FooBuilder::class, $numberOfItems);
+}
+
+/**
+ * @return FooBuilder[]
+ */
+function someFooToBuild(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::toBuildFrom(FooBuilder::class, $numberOfItems);
+}

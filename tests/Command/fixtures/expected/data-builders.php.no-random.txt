@@ -5,11 +5,6 @@ declare(strict_types=1);
 use Buildotter\Core\RandomMultiple;
 use Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder;
 
-function random(): Faker\Generator
-{
-    return \Faker\Factory::create();
-}
-
 function aBar(): BarBuilder
 {
     return BarBuilder::random();
