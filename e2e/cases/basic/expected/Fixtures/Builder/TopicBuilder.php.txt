@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Fixtures\Builder;
+
+use App\Entity\Topic;
+use Buildotter\Core\BuildableWithArgUnpacking;
+use Buildotter\Core\Buildatable;
+
+/**
+ * @implements Buildatable<Topic>
+ */
+final class TopicBuilder implements Buildatable
+{
+    use BuildableWithArgUnpacking;
+
+    public function __construct(
+        public string $name,
+        public string $description,
+        public \DateTimeImmutable $createdAt,
+        public \DateTimeImmutable|null $updatedAt,
+    ) {
+    }
+
+    public static function random(): static
+    {
+        $random = \random();
+
+        return new static(/** @TODO: Initialize its properties to commonly used or safe values */);
+    }
+
+    public function build(): Topic
+    {
+        return new Topic(
+            $this->name,
+            $this->description,
+            $this->createdAt,
+            $this->updatedAt,
+        );
+    }
+}

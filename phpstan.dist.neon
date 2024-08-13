@@ -11,5 +11,8 @@ parameters:
 	paths:
 		- src/
 		- tests/
+		- e2e/
+	excludePaths:
+		- e2e/cases/*
 	symfony:
 		consoleApplicationLoader: tests/console-app.php

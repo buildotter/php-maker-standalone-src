@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Fixtures\Builder\TopicBuilder;
+use Buildotter\Core\RandomMultiple;
+
+function aTopic(): TopicBuilder
+{
+    return TopicBuilder::random();
+}
+
+/**
+ * @return App\Entity\Topic[]
+ */
+function someTopic(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::from(TopicBuilder::class, $numberOfItems);
+}
+
+/**
+ * @return TopicBuilder[]
+ */
+function someTopicToBuild(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::toBuildFrom(TopicBuilder::class, $numberOfItems);
+}

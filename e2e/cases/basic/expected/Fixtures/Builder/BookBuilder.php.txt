@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Fixtures\Builder;
+
+use App\Entity\Book;
+use Buildotter\Core\BuildableWithArgUnpacking;
+use Buildotter\Core\Buildatable;
+
+/**
+ * @implements Buildatable<Book>
+ */
+final class BookBuilder implements Buildatable
+{
+    use BuildableWithArgUnpacking;
+
+    public function __construct(
+        public Book\Isbn $isbn,
+        public string $title,
+        public \DateTimeImmutable $birth,
+        public array $topics,
+    ) {
+    }
+
+    public static function random(): static
+    {
+        $random = \random();
+
+        return new static(/** @TODO: Initialize its properties to commonly used or safe values */);
+    }
+
+    public function build(): Book
+    {
+        return new Book(
+            $this->isbn,
+            $this->title,
+            $this->birth,
+            $this->topics,
+        );
+    }
+}

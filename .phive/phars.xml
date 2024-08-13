@@ -3,4 +3,5 @@
   <phar name="php-cs-fixer" version="^3.22.0" installed="3.59.3" location="./tools/php-cs-fixer" copy="true"/>
   <phar name="phpunit" version="^10.5.27" installed="10.5.27" location="./tools/phpunit.phar" copy="true"/>
   <phar name="infection" version="^0.26.21" installed="0.26.21" location="./tools/infection" copy="true"/>
+  <phar name="humbug/box" version="^4.6.2" installed="4.6.2" location="./tools/box" copy="true"/>
 </phive>

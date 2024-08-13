@@ -39,7 +39,7 @@ final class GenerateCommand extends Command
 
         $this->addOption('autoloader', null, InputOption::VALUE_REQUIRED, 'The path to the Composer autoload file', './vendor/autoload.php');
         $this->addOption('generated-folder', null, InputOption::VALUE_REQUIRED, 'The path where to generate the builder.');
-        $this->addOption('generated-functions', null, InputOption::VALUE_REQUIRED, 'The path where to generate the functions.', './src/Fixture/Builder/data-builders.php');
+        $this->addOption('generated-functions', null, InputOption::VALUE_REQUIRED, 'The path where to generate the functions.', './src/Fixtures/Builder/data-builders.php');
         $this->addOption('no-generated-functions', null, InputOption::VALUE_NONE, 'Disable the data builders\' functions generation.');
         $this->addOption('no-generated-random-function', null, InputOption::VALUE_NONE, 'Disable the "random" function\'s generation.');
     }
@@ -83,7 +83,7 @@ final class GenerateCommand extends Command
             $reflectionClass = $this->getReflectionClass($reflector, $input);
             $builderShortClassName = \sprintf('%sBuilder', $reflectionClass->getShortName());
 
-            $question = new Question('What is the FQCN of the generated builder?', \sprintf('App\\Fixture\\Builder\\%s', $builderShortClassName));
+            $question = new Question('What is the FQCN of the generated builder?', \sprintf('App\\Fixtures\\Builder\\%s', $builderShortClassName));
             $question->setValidator(static fn (string|null $generatedClass): string => (true === \is_string($generatedClass) && '' !== $generatedClass) ? $generatedClass : throw new InvalidArgumentException('Invalid generated class name.'));
 
             $input->setArgument('generated-class', $io->askQuestion($question));

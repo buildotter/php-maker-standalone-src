@@ -72,6 +72,7 @@ return (new PhpCsFixer\Config())
             'return_type_declaration' => true,
             'single_line_empty_body' => true,
             'yoda_style' => true,
+            'concat_space' => ['spacing' => 'one'],
         ]
     )
     ->setRiskyAllowed(true)
@@ -80,8 +81,13 @@ return (new PhpCsFixer\Config())
         PhpCsFixer\Finder::create()
             ->in(
                 [
+                    'bin',
                     'src',
                     'tests',
+                    'e2e',
                 ]
             )
+            ->append([
+                'scoper.inc.php',
+            ])
     );

@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Fixtures\Builder\BookBuilder;
+use App\Fixtures\Builder\TopicBuilder;
+use Buildotter\Core\RandomMultiple;
+
+function random(): Faker\Generator
+{
+    return Faker\Factory::create();
+}
+
+function aTopic(): TopicBuilder
+{
+    return TopicBuilder::random();
+}
+
+/**
+ * @return App\Entity\Topic[]
+ */
+function someTopic(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::from(TopicBuilder::class, $numberOfItems);
+}
+
+/**
+ * @return TopicBuilder[]
+ */
+function someTopicToBuild(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::toBuildFrom(TopicBuilder::class, $numberOfItems);
+}
+
+function aBook(): BookBuilder
+{
+    return BookBuilder::random();
+}
+
+/**
+ * @return App\Entity\Book[]
+ */
+function someBook(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::from(BookBuilder::class, $numberOfItems);
+}
+
+/**
+ * @return BookBuilder[]
+ */
+function someBookToBuild(int|null $numberOfItems = null): array
+{
+    return RandomMultiple::toBuildFrom(BookBuilder::class, $numberOfItems);
+}

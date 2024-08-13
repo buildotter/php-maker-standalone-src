@@ -20,7 +20,8 @@
         "buildotter/php-core": "dev-main",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-phpunit": "^1.4",
-        "phpstan/phpstan-symfony": "^1.4"
+        "phpstan/phpstan-symfony": "^1.4",
+        "symfony/process": "^6.4"
     },
     "autoload": {
         "psr-4": {
@@ -29,8 +30,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Buildotter\\Tests\\MakerStandalone\\": "tests"
-        }
+            "Buildotter\\Tests\\MakerStandalone\\": "tests",
+            "Buildotter\\E2e\\MakerStandalone\\": "e2e"
+        },
+        "exclude-from-classmap": ["/e2e/cases/"]
     },
     "config": {
         "platform": {
@@ -46,12 +49,15 @@
             "@tools:run:php-cs-fixer",
             "@tools:run:phpunit",
             "@tools:run:phpstan",
-            "@tools:run:infection"
+            "@tools:run:compile",
+            "@tools:run:e2e"
         ],
         "tools:run:phpunit": "tools/phpunit.phar",
         "tools:run:php-cs-fixer": "tools/php-cs-fixer fix",
         "tools:run:phpstan": "vendor/bin/phpstan",
-        "tools:run:infection": "tools/infection -s"
+        "tools:run:infection": "tools/infection -s",
+        "tools:run:compile": "tools/box compile",
+        "tools:run:e2e": "bash ./e2e/run.sh"
     },
     "repositories": [
         {
