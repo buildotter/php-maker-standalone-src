@@ -19,7 +19,7 @@ function aFoo(): FooBuilder
 /**
  * @return Buildotter\Tests\MakerStandalone\fixtures\Foo[]
  */
-function someFoo(int|null $numberOfItems = null): array
+function someFoos(int|null $numberOfItems = null): array
 {
     return RandomMultiple::from(FooBuilder::class, $numberOfItems);
 }
@@ -27,7 +27,7 @@ function someFoo(int|null $numberOfItems = null): array
 /**
  * @return FooBuilder[]
  */
-function someFooToBuild(int|null $numberOfItems = null): array
+function someFoosToBuild(int|null $numberOfItems = null): array
 {
     return RandomMultiple::toBuildFrom(FooBuilder::class, $numberOfItems);
 }
@@ -40,7 +40,7 @@ function aBar(): BarBuilder
 /**
  * @return Buildotter\Tests\MakerStandalone\fixtures\Bar[]
  */
-function someBar(int|null $numberOfItems = null): array
+function someBars(int|null $numberOfItems = null): array
 {
     return RandomMultiple::from(BarBuilder::class, $numberOfItems);
 }
@@ -48,7 +48,7 @@ function someBar(int|null $numberOfItems = null): array
 /**
  * @return BarBuilder[]
  */
-function someBarToBuild(int|null $numberOfItems = null): array
+function someBarsToBuild(int|null $numberOfItems = null): array
 {
     return RandomMultiple::toBuildFrom(BarBuilder::class, $numberOfItems);
 }

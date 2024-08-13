@@ -79,7 +79,7 @@ CODE
             ->setReturnType($builderShortClassName)
             ->setBody(\sprintf('return %s::random();', $builderShortClassName));
 
-        $someFromFunction = $functionsFile->addFunction(\sprintf('some%s', $reflectionClass->getShortName()));
+        $someFromFunction = $functionsFile->addFunction(\sprintf('some%ss', $reflectionClass->getShortName()));
         $someFromFunction->addComment(\sprintf('@return %s[]', $reflectionClass->getName()));
         $someFromFunction->addParameter('numberOfItems')
             ->setType('int|null')
@@ -88,7 +88,7 @@ CODE
             ->setReturnType('array')
             ->setBody(\sprintf('return RandomMultiple::from(%s::class, $numberOfItems);', $builderShortClassName));
 
-        $someToBuildFromFunction = $functionsFile->addFunction(\sprintf('some%sToBuild', $reflectionClass->getShortName()));
+        $someToBuildFromFunction = $functionsFile->addFunction(\sprintf('some%ssToBuild', $reflectionClass->getShortName()));
         $someToBuildFromFunction->addComment(\sprintf('@return %s[]', $builderShortClassName));
         $someToBuildFromFunction->addParameter('numberOfItems')
             ->setType('int|null')

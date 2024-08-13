@@ -18,7 +18,7 @@ function aTopic(): TopicBuilder
 /**
  * @return App\Entity\Topic[]
  */
-function someTopic(int|null $numberOfItems = null): array
+function someTopics(int|null $numberOfItems = null): array
 {
     return RandomMultiple::from(TopicBuilder::class, $numberOfItems);
 }
@@ -26,7 +26,7 @@ function someTopic(int|null $numberOfItems = null): array
 /**
  * @return TopicBuilder[]
  */
-function someTopicToBuild(int|null $numberOfItems = null): array
+function someTopicsToBuild(int|null $numberOfItems = null): array
 {
     return RandomMultiple::toBuildFrom(TopicBuilder::class, $numberOfItems);
 }
