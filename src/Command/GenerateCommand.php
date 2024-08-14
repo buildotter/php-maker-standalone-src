@@ -39,6 +39,7 @@ final class GenerateCommand extends Command
 
         $this->addOption('autoloader', null, InputOption::VALUE_REQUIRED, 'The path to the Composer autoload file', './vendor/autoload.php');
         $this->addOption('generated-folder', null, InputOption::VALUE_REQUIRED, 'The path where to generate the builder.');
+        // @TODO: I would prefer to suggest a default where the fixtures are stored in a separate folder from 'src'. So 'fixtures/' instead of 'src/Fixtures/'.
         $this->addOption('generated-functions', null, InputOption::VALUE_REQUIRED, 'The path where to generate the functions.', './src/Fixtures/Builder/data-builders.php');
         $this->addOption('no-generated-functions', null, InputOption::VALUE_NONE, 'Disable the data builders\' functions generation.');
         $this->addOption('no-generated-random-function', null, InputOption::VALUE_NONE, 'Disable the "random" function\'s generation.');
@@ -167,7 +168,7 @@ final class GenerateCommand extends Command
             return Command::FAILURE;
         }
         $io->success(\sprintf(
-            'Builder "%s" for class "%s" generated in "%s".',
+            'Builder "%s" for class "%s" generated in "%s". Please review and modify them!',
             $generatedFqcn, $reflectionClass->getName(), $generatedFolder,
         ));
 
@@ -210,7 +211,17 @@ final class GenerateCommand extends Command
             $ioError->error(\sprintf('Unable to generate functions in "%s".', $inputFunctionsFilePath));
             return Command::FAILURE;
         }
-        $io->success(\sprintf('Builder functions generated in "%s".', $inputFunctionsFilePath));
+        $io->success(\sprintf('Builder functions generated in "%s". Please review and do not forget to configure the autoloader (see https://getcomposer.org/doc/04-schema.md#files).', $inputFunctionsFilePath));
+
+        $io->note(<<<'TXT'
+Do not forget to configure the autoloader to either add or remove from it what has been generated.
+
+For more information see:
+* https://getcomposer.org/doc/04-schema.md#autoload-dev
+* https://getcomposer.org/doc/04-schema.md#exclude-files-from-classmaps
+* https://getcomposer.org/doc/04-schema.md#files (to add the generated functions file)
+TXT
+);
 
         return Command::SUCCESS;
     }
