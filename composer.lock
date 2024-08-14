@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "311643dcdaa87fac2c4e42e6266e6261",
+    "content-hash": "3b46070d1577ebd201e6ea46193c8ea2",
     "packages": [
         {
             "name": "jetbrains/phpstorm-stubs",
@@ -1154,12 +1154,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/buildotter/php-core.git",
-                "reference": "0ebd65eabbf66add711e6750b22eb197228876c4"
+                "reference": "264e89465410f1d49aee0763d9223328da275565"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/buildotter/php-core/zipball/0ebd65eabbf66add711e6750b22eb197228876c4",
-                "reference": "0ebd65eabbf66add711e6750b22eb197228876c4",
+                "url": "https://api.github.com/repos/buildotter/php-core/zipball/264e89465410f1d49aee0763d9223328da275565",
+                "reference": "264e89465410f1d49aee0763d9223328da275565",
                 "shasum": ""
             },
             "require": {
@@ -1171,6 +1171,9 @@
                 "phpstan/phpstan-phpunit": "^1.4",
                 "symfony/var-dumper": "^6.4"
             },
+            "suggest": {
+                "buildotter/php-maker-standalone": "Generate test data builder based on Buildotter Core"
+            },
             "default-branch": true,
             "type": "library",
             "autoload": {
@@ -1178,49 +1181,31 @@
                     "Buildotter\\Core\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Buildotter\\Tests\\Core\\": "tests"
-                },
-                "files": [
-                    "tests/functions.php"
-                ]
-            },
-            "scripts": {
-                "tools:run": [
-                    "@tools:run:php-cs-fixer",
-                    "@tools:run:phpunit",
-                    "@tools:run:phpstan",
-                    "@tools:run:infection"
-                ],
-                "tools:run:phpunit": [
-                    "tools/phpunit.phar"
-                ],
-                "tools:run:php-cs-fixer": [
-                    "tools/php-cs-fixer fix"
-                ],
-                "tools:run:phpstan": [
-                    "vendor/bin/phpstan"
-                ],
-                "tools:run:infection": [
-                    "tools/infection -s"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-3.0-or-later"
             ],
             "authors": [
                 {
                     "name": "Benjamin Rambaud",
-                    "email": "beram.job@gmail.com"
+                    "email": "beram.job@gmail.com",
+                    "homepage": "https://brambaud.github.io/"
                 }
             ],
             "description": "Buildotter Core: Foundation to implement the Test Data Builder Pattern",
+            "homepage": "https://github.com/buildotter/php-core",
+            "keywords": [
+                "builder",
+                "data",
+                "php",
+                "test",
+                "testing"
+            ],
             "support": {
-                "source": "https://github.com/buildotter/php-core/tree/main",
-                "issues": "https://github.com/buildotter/php-core/issues"
+                "issues": "https://github.com/buildotter/php-core/issues",
+                "source": "https://github.com/buildotter/php-core/tree/main"
             },
-            "time": "2024-07-14T17:32:25+00:00"
+            "time": "2024-08-14T15:00:12+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -1468,9 +1453,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "buildotter/php-core": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
