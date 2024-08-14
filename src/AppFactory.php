@@ -11,7 +11,7 @@ final class AppFactory
 {
     public static function make(): Application
     {
-        $app = new Application();
+        $app = new Application('Buildotter Maker Standalone', '@compiled-git-version@');
 
         $command = new Command\GenerateCommand(new BuilderGenerator());
         $app->add($command);
