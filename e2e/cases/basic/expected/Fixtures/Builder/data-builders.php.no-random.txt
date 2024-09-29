@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Fixtures\Builder\TopicBuilder;
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 
 function aTopic(): TopicBuilder
 {
-    return TopicBuilder::random();
+    return TopicBuilder::new();
 }
 
 /**
@@ -15,7 +15,7 @@ function aTopic(): TopicBuilder
  */
 function someTopics(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(TopicBuilder::class, $numberOfItems);
+    return Many::from(TopicBuilder::class, $numberOfItems);
 }
 
 /**
@@ -23,5 +23,5 @@ function someTopics(int|null $numberOfItems = null): array
  */
 function someTopicsToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(TopicBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(TopicBuilder::class, $numberOfItems);
 }

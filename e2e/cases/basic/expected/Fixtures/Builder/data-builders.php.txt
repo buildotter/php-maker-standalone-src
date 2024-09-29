@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Fixtures\Builder\BookBuilder;
 use App\Fixtures\Builder\TopicBuilder;
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 
 function random(): Faker\Generator
 {
@@ -13,7 +13,7 @@ function random(): Faker\Generator
 
 function aTopic(): TopicBuilder
 {
-    return TopicBuilder::random();
+    return TopicBuilder::new();
 }
 
 /**
@@ -21,7 +21,7 @@ function aTopic(): TopicBuilder
  */
 function someTopics(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(TopicBuilder::class, $numberOfItems);
+    return Many::from(TopicBuilder::class, $numberOfItems);
 }
 
 /**
@@ -29,12 +29,12 @@ function someTopics(int|null $numberOfItems = null): array
  */
 function someTopicsToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(TopicBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(TopicBuilder::class, $numberOfItems);
 }
 
 function aBook(): BookBuilder
 {
-    return BookBuilder::random();
+    return BookBuilder::new();
 }
 
 /**
@@ -42,7 +42,7 @@ function aBook(): BookBuilder
  */
 function someBooks(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(BookBuilder::class, $numberOfItems);
+    return Many::from(BookBuilder::class, $numberOfItems);
 }
 
 /**
@@ -50,5 +50,5 @@ function someBooks(int|null $numberOfItems = null): array
  */
 function someBooksToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(BookBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(BookBuilder::class, $numberOfItems);
 }

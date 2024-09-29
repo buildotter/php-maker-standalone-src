@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 use Buildotter\Tests\MakerStandalone\fixtures\expected\FooBuilder;
 
 function random(): \Faker\Generator
@@ -12,7 +12,7 @@ function random(): \Faker\Generator
 
 function aFoo(): FooBuilder
 {
-    return FooBuilder::random();
+    return FooBuilder::new();
 }
 
 /**
@@ -20,7 +20,7 @@ function aFoo(): FooBuilder
  */
 function someFoos(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(FooBuilder::class, $numberOfItems);
+    return Many::from(FooBuilder::class, $numberOfItems);
 }
 
 /**
@@ -28,5 +28,5 @@ function someFoos(int|null $numberOfItems = null): array
  */
 function someFoosToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(FooBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(FooBuilder::class, $numberOfItems);
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 use Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder;
 use Buildotter\Tests\MakerStandalone\fixtures\expected\FooBuilder;
 
@@ -13,7 +13,7 @@ function random(): Faker\Generator
 
 function aFoo(): FooBuilder
 {
-    return FooBuilder::random();
+    return FooBuilder::new();
 }
 
 /**
@@ -21,7 +21,7 @@ function aFoo(): FooBuilder
  */
 function someFoos(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(FooBuilder::class, $numberOfItems);
+    return Many::from(FooBuilder::class, $numberOfItems);
 }
 
 /**
@@ -29,12 +29,12 @@ function someFoos(int|null $numberOfItems = null): array
  */
 function someFoosToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(FooBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(FooBuilder::class, $numberOfItems);
 }
 
 function aBar(): BarBuilder
 {
-    return BarBuilder::random();
+    return BarBuilder::new();
 }
 
 /**
@@ -42,7 +42,7 @@ function aBar(): BarBuilder
  */
 function someBars(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(BarBuilder::class, $numberOfItems);
+    return Many::from(BarBuilder::class, $numberOfItems);
 }
 
 /**
@@ -50,5 +50,5 @@ function someBars(int|null $numberOfItems = null): array
  */
 function someBarsToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(BarBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(BarBuilder::class, $numberOfItems);
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 use Buildotter\Tests\MakerStandalone\fixtures\expected\BarBuilder;
 
 function aBar(): BarBuilder
 {
-    return BarBuilder::random();
+    return BarBuilder::new();
 }
 
 /**
@@ -15,7 +15,7 @@ function aBar(): BarBuilder
  */
 function someBars(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::from(BarBuilder::class, $numberOfItems);
+    return Many::from(BarBuilder::class, $numberOfItems);
 }
 
 /**
@@ -23,5 +23,5 @@ function someBars(int|null $numberOfItems = null): array
  */
 function someBarsToBuild(int|null $numberOfItems = null): array
 {
-    return RandomMultiple::toBuildFrom(BarBuilder::class, $numberOfItems);
+    return Many::toBuildFrom(BarBuilder::class, $numberOfItems);
 }
