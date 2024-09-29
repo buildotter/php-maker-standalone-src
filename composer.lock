@@ -1154,12 +1154,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/buildotter/php-core.git",
-                "reference": "264e89465410f1d49aee0763d9223328da275565"
+                "reference": "830d9ac152aaa61fe927b21062d39c91cfbff1bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/buildotter/php-core/zipball/264e89465410f1d49aee0763d9223328da275565",
-                "reference": "264e89465410f1d49aee0763d9223328da275565",
+                "url": "https://api.github.com/repos/buildotter/php-core/zipball/830d9ac152aaa61fe927b21062d39c91cfbff1bd",
+                "reference": "830d9ac152aaa61fe927b21062d39c91cfbff1bd",
                 "shasum": ""
             },
             "require": {
@@ -1205,7 +1205,7 @@
                 "issues": "https://github.com/buildotter/php-core/issues",
                 "source": "https://github.com/buildotter/php-core/tree/main"
             },
-            "time": "2024-08-14T15:00:12+00:00"
+            "time": "2024-09-29T14:11:30+00:00"
         },
         {
             "name": "phpstan/phpstan",

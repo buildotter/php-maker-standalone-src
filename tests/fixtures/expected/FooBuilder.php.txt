@@ -22,7 +22,7 @@ final class FooBuilder implements Buildatable
     ) {
     }
 
-    public static function random(): static
+    public static function new(): static
     {
         $random = \random();
 

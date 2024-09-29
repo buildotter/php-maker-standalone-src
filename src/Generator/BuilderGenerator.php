@@ -6,7 +6,7 @@ namespace Buildotter\MakerStandalone\Generator;
 
 use Buildotter\Core\BuildableWithArgUnpacking;
 use Buildotter\Core\Buildatable;
-use Buildotter\Core\RandomMultiple;
+use Buildotter\Core\Many;
 use Nette\PhpGenerator\PhpFile;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 
@@ -38,7 +38,7 @@ final class BuilderGenerator
                 ->setType((string) $property->getType());
         }
 
-        $class->addMethod('random')
+        $class->addMethod('new')
             ->setStatic()
             ->setReturnType('static')
             ->setBody(
@@ -72,12 +72,12 @@ CODE
 
         $functionsFile->setStrictTypes();
         $functionsFile->addUse($generatedFqcn);
-        $functionsFile->addUse(RandomMultiple::class);
+        $functionsFile->addUse(Many::class);
 
         $functionsFile
             ->addFunction(\sprintf('a%s', $reflectionClass->getShortName()))
             ->setReturnType($builderShortClassName)
-            ->setBody(\sprintf('return %s::random();', $builderShortClassName));
+            ->setBody(\sprintf('return %s::new();', $builderShortClassName));
 
         $someFromFunction = $functionsFile->addFunction(\sprintf('some%ss', $reflectionClass->getShortName()));
         $someFromFunction->addComment(\sprintf('@return %s[]', $reflectionClass->getName()));
@@ -86,7 +86,7 @@ CODE
             ->setDefaultValue(null);
         $someFromFunction
             ->setReturnType('array')
-            ->setBody(\sprintf('return RandomMultiple::from(%s::class, $numberOfItems);', $builderShortClassName));
+            ->setBody(\sprintf('return Many::from(%s::class, $numberOfItems);', $builderShortClassName));
 
         $someToBuildFromFunction = $functionsFile->addFunction(\sprintf('some%ssToBuild', $reflectionClass->getShortName()));
         $someToBuildFromFunction->addComment(\sprintf('@return %s[]', $builderShortClassName));
@@ -95,7 +95,7 @@ CODE
             ->setDefaultValue(null);
         $someToBuildFromFunction
             ->setReturnType('array')
-            ->setBody(\sprintf('return RandomMultiple::toBuildFrom(%s::class, $numberOfItems);', $builderShortClassName));
+            ->setBody(\sprintf('return Many::toBuildFrom(%s::class, $numberOfItems);', $builderShortClassName));
 
         return $functionsFile;
     }
