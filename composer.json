@@ -20,6 +20,7 @@
         "buildotter/php-core": "dev-main",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-phpunit": "^1.4",
+        "phpstan/phpstan-strict-rules": "^1.6",
         "phpstan/phpstan-symfony": "^1.4",
         "symfony/process": "^6.4"
     },
@@ -33,6 +34,9 @@
             "Buildotter\\Tests\\MakerStandalone\\": "tests",
             "Buildotter\\E2e\\MakerStandalone\\": "e2e"
         },
+        "files": [
+            "tests/functions.php"
+        ],
         "exclude-from-classmap": ["/e2e/cases/"]
     },
     "config": {

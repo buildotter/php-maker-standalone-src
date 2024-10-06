@@ -18,7 +18,7 @@ final class GenerateCommandTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->basePath = $_ENV['BUILDATA_TEST_BASE_PATH'] ?? \sys_get_temp_dir();
+        $this->basePath = \generatedBuildotterTestBasePath();
     }
 
     public function test_it_should_generate_builder(): void
