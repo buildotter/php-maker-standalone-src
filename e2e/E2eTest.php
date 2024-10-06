@@ -21,7 +21,7 @@ final class E2eTest extends TestCase
     {
         $this->phpBinaryPath = $this->phpBinaryPath();
 
-        $this->basePath = $_ENV['BUILDATA_TEST_BASE_PATH'] ?? \sys_get_temp_dir();
+        $this->basePath = \generatedBuildotterTestBasePath();
     }
 
     public function test_smoke(): void
