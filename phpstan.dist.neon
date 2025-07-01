@@ -10,6 +10,9 @@ parameters:
 	level: max
 	bootstrapFiles:
 		- ./tools/phpunit.phar
+	fileExtensions:
+		- php
+		- php.txt
 	paths:
 		- src/
 		- tests/
@@ -18,3 +21,8 @@ parameters:
 		- e2e/cases/*
 	symfony:
 		consoleApplicationLoader: tests/console-app.php
+	ignoreErrors:
+		# Generated `\Buildotter\Core\Buildatable::new` methods must be completed by the user.
+		-
+			message: "#^Class Buildotter\\\\Tests\\\\MakerStandalone\\\\fixtures\\\\expected\\\\[a-zA-Z0-9\\_]+Builder constructor invoked with 0 parameters, [0-9]+ required\\.$#"
+			path: tests/fixtures/expected/*.php.txt
