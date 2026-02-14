@@ -61,10 +61,9 @@ jobs:
       -
         name: "Configure git"
         working-directory: remote-repository
-        # @TODO: replace by buildotter-bot
         run: |
-          git config user.email "beram.job@gmail.com"
-          git config user.name "beram"
+          git config user.email "${{ secrets.GIT_MAIL }}"
+          git config user.name "${{ secrets.GIT_NAME }}"
 
       -
         name: "Move phar to remote repository"
