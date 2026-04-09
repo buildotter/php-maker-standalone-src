@@ -25,7 +25,7 @@ jobs:
       - name: Setup PHP (compilation)
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
         with:
-          php-version: "8.3"
+          php-version: "8.4"
           coverage: none
 
       - name: php version (compilation)
@@ -35,7 +35,7 @@ jobs:
         run: composer install
 
       - name: Compile phar
-        run: composer tools:run:compile
+        run: composer tools:run:compile-downgraded
 
       - name: Setup PHP (e2e)
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0

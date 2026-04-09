@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.4",
         "nette/php-generator": "^4.1",
         "roave/better-reflection": "^6.25",
         "symfony/console": "^6.4",
@@ -22,7 +22,8 @@
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-phpunit": "^1.4",
         "phpstan/phpstan-strict-rules": "^1.6",
-        "phpstan/phpstan-symfony": "^1.4"
+        "phpstan/phpstan-symfony": "^1.4",
+        "rector/rector": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -39,7 +40,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.1.0"
+            "php": "8.4.1"
         },
         "optimize-autoloader": true,
         "sort-packages": true
@@ -60,6 +61,11 @@
         "tools:run:phpstan": "vendor/bin/phpstan",
         "tools:run:infection": "tools/infection -s",
         "tools:run:compile": "tools/box compile",
+        "tools:run:downgrade": "bash ./tools/downgrade.sh",
+        "tools:run:compile-downgraded": [
+            "@tools:run:downgrade",
+            "@tools:run:compile"
+        ],
         "tools:run:e2e": "bash ./e2e/run.sh"
     }
 }

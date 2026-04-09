@@ -45,6 +45,7 @@ $jetBrainStubs = static function (string $stubsDir = __DIR__ . '/vendor/jetbrain
 };
 
 return [
+    'php-version' => '8.1',
     'expose-global-constants' => false,
     'expose-global-functions' => false,
     'expose-global-classes' => false,
