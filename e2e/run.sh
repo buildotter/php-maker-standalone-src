@@ -6,4 +6,5 @@ script_dir="$(dirname "$0")"
 readonly script_dir
 
 cd "$script_dir"
-php ../tools/phpunit.phar --testdox
+composer install --no-dev --prefer-dist
+php ./tools/phpunit.phar --testdox

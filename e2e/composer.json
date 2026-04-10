@@ -1,0 +1,25 @@
+{
+    "name": "buildotter/e2e",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Buildotter\\E2e\\MakerStandalone\\": "src/"
+        },
+        "files": [
+            "functions.php"
+        ]
+    },
+    "require": {
+        "symfony/filesystem": "^6.4",
+        "symfony/process": "^6.4"
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

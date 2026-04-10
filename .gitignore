@@ -1,6 +1,7 @@
 /build/
 /.box_dump/
 /vendor/
+e2e/vendor/
 phpstan.neon
 .php-cs-fixer.cache
 .phpunit.cache/
