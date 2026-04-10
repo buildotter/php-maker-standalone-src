@@ -10,19 +10,40 @@ jobs:
   e2e:
     name: e2e
 
+    strategy:
+      matrix:
+        include:
+          - php: '8.1'
+          - php: '8.2'
+          - php: '8.3'
+          - php: '8.4'
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Setup PHP
+      - name: Setup PHP (compilation)
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
         with:
           php-version: "8.3"
           coverage: none
+
+      - name: php version (compilation)
+        run: php --version
+
       - name: Install dependencies
         run: composer install
 
       - name: Compile phar
         run: composer tools:run:compile
+
+      - name: Setup PHP (e2e)
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
+        with:
+          php-version: "${{ matrix.php }}"
+          coverage: none
+
+      - name: php version (e2e)
+        run: php --version
 
       - name: Run e2e tests
         run: composer tools:run:e2e
