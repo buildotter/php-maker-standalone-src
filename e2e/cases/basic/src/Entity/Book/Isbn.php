@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Book;
 
-final class Isbn
+final readonly class Isbn
 {
     public function __construct(
         private string $value,
