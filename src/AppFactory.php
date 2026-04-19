@@ -14,7 +14,7 @@ final class AppFactory
         $app = new Application('Buildotter Maker Standalone', '@compiled-git-version@');
 
         $command = new Command\GenerateCommand(new BuilderGenerator());
-        $app->add($command);
+        $app->addCommand($command);
         $app->setDefaultCommand($command->getName() ?? 'generate', true);
 
         return $app;
