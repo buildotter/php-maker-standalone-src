@@ -23,21 +23,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PHP
+      - name: Setup PHP (compilation)
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
         with:
-          php-version: "8.3"
+          php-version: "8.4"
           coverage: none
       - name: Install dependencies
         run: composer install
 
       - name: Compile phar
-        run: composer tools:run:compile
+        run: composer tools:run:compile-downgraded
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: phar-file
           path: build/buildotter-maker-standalone.phar
+
+      - name: Setup PHP (e2e on min supported version)
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
+        with:
+          php-version: "8.1"
+          coverage: none
 
       - name: Run e2e tests
         run: composer tools:run:e2e

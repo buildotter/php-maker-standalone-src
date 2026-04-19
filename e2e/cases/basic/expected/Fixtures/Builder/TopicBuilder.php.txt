@@ -18,6 +18,7 @@ final class TopicBuilder implements Buildatable
     public function __construct(
         public string $name,
         public string $description,
+        public Topic\Status $status,
         public \DateTimeImmutable $createdAt,
         public \DateTimeImmutable|null $updatedAt,
     ) {
@@ -35,6 +36,7 @@ final class TopicBuilder implements Buildatable
         return new Topic(
             $this->name,
             $this->description,
+            $this->status,
             $this->createdAt,
             $this->updatedAt,
         );
