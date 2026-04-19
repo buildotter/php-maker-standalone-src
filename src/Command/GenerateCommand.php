@@ -61,7 +61,7 @@ final class GenerateCommand extends Command
 
         if (false === \is_string($input->getArgument('class'))) {
             $question = new Question('For which class do you need to generate a builder? Please enter the Fully Qualified Class Name (FQCN)');
-            $question->setValidator(static function (string|null $class) use ($reflector): string {
+            $question->setValidator(static function ($class) use ($reflector): string {
                 if (false === \is_string($class) || '' === $class) {
                     throw new InvalidArgumentException('Invalid class name.');
                 }
@@ -85,7 +85,7 @@ final class GenerateCommand extends Command
             $builderShortClassName = \sprintf('%sBuilder', $reflectionClass->getShortName());
 
             $question = new Question('What is the FQCN of the generated builder?', \sprintf('App\\Fixtures\\Builder\\%s', $builderShortClassName));
-            $question->setValidator(static fn (string|null $generatedClass): string => (true === \is_string($generatedClass) && '' !== $generatedClass) ? $generatedClass : throw new InvalidArgumentException('Invalid generated class name.'));
+            $question->setValidator(static fn ($generatedClass): string => (true === \is_string($generatedClass) && '' !== $generatedClass) ? $generatedClass : throw new InvalidArgumentException('Invalid generated class name.'));
 
             $input->setArgument('generated-class', $io->askQuestion($question));
         }
