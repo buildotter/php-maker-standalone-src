@@ -23,3 +23,14 @@ parameters:
 		-
 			message: "#^Class Buildotter\\\\Tests\\\\MakerStandalone\\\\fixtures\\\\expected\\\\[a-zA-Z0-9\\_]+Builder constructor invoked with 0 parameters, [0-9]+ required\\.$#"
 			path: tests/fixtures/expected/*.php.txt
+		# Irrelevant. These are tests fixtures, not actual code.
+		-
+			rawMessage: 'Method Buildotter\Tests\MakerStandalone\fixtures\DifferentTypes::__construct() has parameter $intersection with generic interface Iterator but does not specify its types: TKey, TValue'
+			identifier: missingType.generics
+			count: 1
+			path: tests/fixtures/DifferentTypes.php
+		-
+			rawMessage: 'Method Buildotter\Tests\MakerStandalone\fixtures\expected\DifferentTypesBuilder::__construct() has parameter $intersection with generic interface Iterator but does not specify its types: TKey, TValue'
+			identifier: missingType.generics
+			count: 1
+			path: tests/fixtures/expected/DifferentTypesBuilder.php.txt
