@@ -9,6 +9,8 @@ return RectorConfig::configure()
         '*/tests/*',
         '*/Test/*',
         './vendor/jetbrains/phpstorm-stubs/*',
+        './vendor/rector/*',
+        './vendor/phpstan/*',
     ])
     ->withPaths([
         __DIR__ . '/src',
