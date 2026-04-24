@@ -14,7 +14,7 @@
         "nette/php-generator": "^4.1",
         "roave/better-reflection": "^6.70",
         "symfony/console": "^7.4",
-        "symfony/filesystem": "^7.4"
+        "symfony/filesystem": "^7.4 || ^8.0"
     },
     "require-dev": {
         "buildotter/php-core": "dev-main",
