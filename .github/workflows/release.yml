@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup PHP (compilation)
-        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: "8.4"
           coverage: none
@@ -40,7 +40,7 @@ jobs:
           path: build/buildotter-maker-standalone.phar
 
       - name: Setup PHP (e2e on min supported version)
-        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: "8.1"
           coverage: none
